@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ 
+#define pr pair<ll,ll>
+#define mp make_pair
+#define inf 999999999999999
+#define mod 1000000007
+ 
+int n, m, u, v, w;
+vector<pr > grp[100001];
+vector<ll> vis(100001), mxr(100001), mnr(100001, inf), nws(100001), dis(100001, inf);
+struct data{
+	ll ds, nd, par;
+	bool operator<(const data & b) const
+	{
+		return ds>b.ds;
+	} 
+};
+priority_queue<data> pq;
+ 
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	cin>>n>>m;
+	for(int i=0;i<m;i++)
+		cin>>u>>v>>w, grp[u].push_back(mp(v,w));
+	pq.push({0,1,0});
+	dis[1] = 0;
+	nws[0] = 1;
+	mxr[0] = mnr[0] = -1;
+	while(!pq.empty())
+	{
+		data cur = pq.top(); pq.pop();
+		if(dis[cur.nd] == cur.ds)
+		{
+			nws[cur.nd] = (nws[cur.nd] + nws[cur.par])%mod;
+			mnr[cur.nd] = min(mnr[cur.nd], mnr[cur.par]+1);
+			mxr[cur.nd] = max(mxr[cur.nd], mxr[cur.par]+1);
+		}
+		if(vis[cur.nd]) continue;
+		vis[cur.nd] = 1;
+		for( int i=0 ; i<grp[cur.nd].size() ; i++ )
+		{
+			pr tmp = grp[cur.nd][i];
+			if(dis[tmp.first]>=dis[cur.nd]+tmp.second)
+				dis[tmp.first] = dis[cur.nd]+tmp.second, pq.push({dis[tmp.first], tmp.first, cur.nd});
+		}
+	}
+	cout<<dis[n]<<" "<<nws[n]<<" "<<mnr[n]<<" "<<mxr[n]<<"\n";
+	return 0;
+}

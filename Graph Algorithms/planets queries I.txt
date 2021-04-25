@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+using namespace std;
+ 
+typedef long long ll;
+ 
+ll n, q, u, k;
+ll grp[200001][30]={0};
+ 
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	//cin.tie(0), cout.tie(0);
+	cin>>n>>q;
+	for(int i=1;i<=n;i++)
+		cin>>grp[i][0];
+	for(int i=1;i<30;i++)
+	{
+		for(int j=1;j<=n;j++)
+		{
+			grp[j][i] = grp[grp[j][i-1]][i-1];
+		}
+	}
+	while(q--)
+	{
+		cin>>u>>k;
+		for( int i=29 ; i>=0 ; i-- )
+			if((1LL<<i)<=k)
+				u = grp[u][i], k-=(1LL<<i);
+		cout<<u<<"\n";
+	}
+	return 0;
+}
