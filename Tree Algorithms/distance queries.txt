@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+ 
+int n, q, a, b, sol, diff;
+vector<int> tree[200001];
+int vis[200001], ancs[200001][20];
+ 
+void dfs(int src, int hgt)
+{
+	vis[src] = hgt;
+	for(auto u : tree[src])
+		if(!vis[u])
+			ancs[u][0] = src, dfs(u, hgt+1);
+}
+ 
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	cin>>n>>q;
+	for(int i=0;i<n-1;i++)
+		cin>>a>>b, tree[a].push_back(b), tree[b].push_back(a);
+	dfs(1, 1);
+	for(int i=1;i<20;i++)
+		for(int j=1;j<=n;j++)
+			ancs[j][i] = ancs[ancs[j][i-1]][i-1];
+	while(q--)
+	{
+		cin>>a>>b;
+		sol = 0;
+		if(vis[a]>vis[b])
+			swap(a,b);
+		diff = vis[b] - vis[a];
+		int tmp=0;
+		for( int i=19 ; i>=0 ; i-- )
+			if( tmp+(1<<i) <= diff ) 
+				tmp+=(1<<i), b = ancs[b][i];
+		if(b==a)
+		{
+			cout<<diff<<"\n";
+			continue;
+		}
+		for(int i=19;i>=0;i--)
+			while( ancs[b][i]!=ancs[a][i] ) 
+				diff += (1<<(i+1)), b=ancs[b][i], a=ancs[a][i];
+		cout<<diff+2<<endl;
+	}
+	return 0;
+}

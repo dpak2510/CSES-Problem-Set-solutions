@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+#define pr pair<ll,ll> 
+#define mp make_pair
+
+ll n, a, b;
+vector<ll> tree[200010];
+vector<pr> sol(200010);
+
+pr fun(int src, int par)
+{
+    ll f=0, s=0;
+    for(auto u: tree[src])
+    {
+        if(u!=par)
+        {
+            auto cur = fun(u, src);
+            f+=cur.first;
+            s+=cur.second;
+        }
+    }
+    sol[src] = mp(f+1, s+f);
+    return mp(f+1, s+f);
+}
+
+void pass(int src, int par)
+{
+    sol[src] = mp(n, n+sol[par].second-2*sol[src].first);
+    for(auto u: tree[src])
+    {
+        if(u!=par)
+        {
+            pass(u, src);
+        }
+    }
+}
+
+int main()
+{
+    cin>>n;
+    for(int i=0;i<n-1;i++)
+        cin>>a>>b, tree[a].push_back(b), tree[b].push_back(a);
+    fun(1,0);
+    for(auto u: tree[1])
+        pass(u, 1);
+    for(int i=1;i<=n;i++)
+        cout<<sol[i].second<<" ";
+    cout<<"\n";
+	return 0;
+}
